@@ -328,23 +328,32 @@
     }
 
     .letter-box {
-      background: rgba(250, 246, 240, 0.04);
-      border: 1px solid rgba(212, 165, 116, 0.2);
-      padding: 1.25rem 1.1rem;
+      background: rgba(250, 246, 240, 0.06);
+      border: 1px solid rgba(212, 165, 116, 0.28);
+      padding: 1.35rem 1.2rem;
       text-align: left;
-      line-height: 1.55;
-      font-size: clamp(0.78rem, 2.8vw, 0.92rem);
-      color: rgba(250, 246, 240, 0.9);
+      line-height: 1.68;
+      font-size: clamp(0.95rem, 3.6vw, 1.08rem);
+      font-weight: 400;
+      color: var(--cream);
       overflow: hidden;
     }
 
-    .letter-box p + p { margin-top: 0.65rem; }
+    .letter-box p + p { margin-top: 0.9rem; }
+
+    .letter-box p:first-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 4.8vw, 1.5rem);
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--cream);
+    }
 
     .letter-signature {
-      margin-top: 0.85rem;
+      margin-top: 1rem;
       flex-shrink: 0;
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 4vw, 1.2rem);
+      font-size: clamp(1.15rem, 4.5vw, 1.35rem);
       font-style: italic;
       color: var(--rose-bright);
       text-align: right;
@@ -390,9 +399,13 @@
       flex-direction: column;
       justify-content: center;
       margin-top: 0;
-      padding: clamp(0.85rem, 2.5vh, 1.35rem) clamp(0.9rem, 3vw, 1.15rem);
-      border-color: rgba(212, 165, 116, 0.28);
+      padding: clamp(1.15rem, 3vh, 1.6rem) clamp(1.15rem, 4vw, 1.45rem);
+      border-color: rgba(212, 165, 116, 0.38);
       animation: letterFullIn 0.7s var(--ease-out);
+    }
+
+    .letter-section.is-reading .container {
+      max-width: 28rem;
     }
 
     .letter-section.is-reading .letter-box #letterContent {
@@ -401,11 +414,6 @@
       flex-direction: column;
       justify-content: center;
       overflow: hidden;
-    }
-
-    .letter-section.is-reading .stage-continue {
-      flex-shrink: 0;
-      margin-top: 0.75rem;
     }
 
     @keyframes letterFullIn {
@@ -426,42 +434,54 @@
     }
 
     /* Timeline — swipe carousel */
+    .timeline-section .container {
+      display: flex;
+      flex-direction: column;
+      max-width: 28rem;
+      height: calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - calc(4.75rem + env(safe-area-inset-bottom)));
+      overflow: hidden;
+    }
+
+    .timeline-section .stage-head {
+      flex-shrink: 0;
+      margin-bottom: 1rem;
+    }
+
     .timeline-carousel {
-      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       width: 100%;
-      margin-top: 0.5rem;
+      min-height: 0;
     }
 
     .timeline-track {
       display: flex;
-      gap: 0.75rem;
+      gap: 1rem;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
-      padding: 0.25rem 0 0.5rem;
+      padding: 0.5rem max(1rem, 5vw) 0.75rem;
+      scroll-padding-inline: max(1rem, 5vw);
       scrollbar-width: none;
     }
 
     .timeline-track::-webkit-scrollbar { display: none; }
 
-    .timeline {
-      text-align: left;
-      position: relative;
-      flex: 0 0 88%;
-      scroll-snap-align: center;
-      padding: 1.25rem;
-      border: 1px solid rgba(212, 165, 116, 0.2);
-      background: rgba(250, 246, 240, 0.03);
-      opacity: 1;
-      transform: none;
-    }
-
-    .timeline::before { display: none; }
-
     .timeline-item {
       position: relative;
-      padding: 0;
+      flex: 0 0 min(84%, 20rem);
+      scroll-snap-align: center;
+      text-align: left;
+      padding: 1.75rem 1.5rem 1.5rem;
+      border: 1px solid rgba(212, 165, 116, 0.28);
+      background: rgba(250, 246, 240, 0.05);
+      border-radius: 3px;
+      min-height: 10.5rem;
+      display: flex;
+      flex-direction: column;
       opacity: 1;
       transform: none;
     }
@@ -469,55 +489,67 @@
     .timeline-item::before {
       content: '';
       display: block;
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: var(--rose);
-      box-shadow: 0 0 10px var(--rose);
-      margin-bottom: 0.75rem;
+      box-shadow: 0 0 12px rgba(232, 164, 184, 0.6);
+      margin-bottom: 1.1rem;
+      flex-shrink: 0;
     }
 
     .timeline-dots {
       display: flex;
       justify-content: center;
-      gap: 0.45rem;
-      margin-top: 0.75rem;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      flex-shrink: 0;
     }
 
     .timeline-dots button {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       border: none;
       padding: 0;
-      background: rgba(212, 165, 116, 0.25);
+      background: rgba(212, 165, 116, 0.28);
       cursor: pointer;
       transition: transform 0.3s, background 0.3s;
     }
 
     .timeline-dots button.is-active {
       background: var(--rose);
-      transform: scale(1.25);
+      transform: scale(1.3);
     }
 
     .timeline-item__date {
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.5rem;
     }
 
     .timeline-item__title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem;
-      margin-bottom: 0.45rem;
+      font-size: clamp(1.35rem, 5vw, 1.55rem);
+      line-height: 1.25;
+      margin-bottom: 0.65rem;
+      color: var(--cream);
     }
 
     .timeline-item__text {
-      color: var(--text-muted);
-      line-height: 1.55;
-      font-size: 0.88rem;
+      color: rgba(250, 246, 240, 0.78);
+      line-height: 1.65;
+      font-size: clamp(0.9rem, 3.2vw, 1rem);
+      margin-top: auto;
+    }
+
+    .timeline-section .stage-continue {
+      flex-shrink: 0;
+      margin-top: 1.25rem;
+      width: 100%;
     }
 
     /* Finale */
@@ -692,12 +724,16 @@
       transform: scale(1);
     }
 
+    .music-btn.is-hidden-on-letter {
+      display: none;
+    }
+
     .audio-controls {
       display: none;
       align-items: center;
       justify-content: center;
-      gap: 0.65rem;
-      margin-top: 0.65rem;
+      gap: 0.75rem;
+      margin-top: 0.85rem;
       flex-shrink: 0;
     }
 
@@ -706,16 +742,22 @@
     }
 
     .audio-btn {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       flex-shrink: 0;
     }
 
     .letter-audio-hint {
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: rgba(250, 246, 240, 0.75);
+    }
+
+    .letter-section.is-reading .stage-continue {
+      flex-shrink: 0;
+      margin-top: 1rem;
+      width: 100%;
     }
 
     /* Love game */
@@ -1120,8 +1162,8 @@
       gameWinMessage: 'Just like us — every pair belongs together. Your letter is ready.',
       gameToLetterCta: 'Read your letter',
       letterLockedText: 'Win the game above to unlock your letter from Prosper.',
-      letterAudioHint: '♫ playing for you',
-      letterAudioPaused: 'Tap play for your song',
+      letterAudioHint: 'Playing for you',
+      letterAudioPaused: 'Tap to play your song',
       gamePairs: [
         { id: 'heart', label: '♥' },
         { id: 'us', label: 'Us' },
@@ -1155,7 +1197,8 @@
       const letterActive = isLetterReading();
       const playing = letterActive ? letterAudioPlaying : bgMusicPlaying;
 
-      $('#musicBtn').classList.toggle('is-playing', playing);
+      $('#musicBtn').classList.toggle('is-playing', playing && !letterActive);
+      $('#musicBtn').classList.toggle('is-hidden-on-letter', letterActive);
       $('#musicBtn').setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
       $('#musicBtn').title = playing ? 'Pause' : 'Play';
 
@@ -1304,7 +1347,7 @@
       const dotsEl = $('#timelineDots');
       CONFIG.timeline.forEach((item, i) => {
         const el = document.createElement('article');
-        el.className = 'timeline timeline-item';
+        el.className = 'timeline-item';
         el.innerHTML = `
           <p class="timeline-item__date">${escapeHtml(item.date)}</p>
           <h3 class="timeline-item__title">${escapeHtml(item.title)}</h3>

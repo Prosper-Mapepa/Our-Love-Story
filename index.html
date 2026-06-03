@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a0f14" />
+  <title>Our Story · Happy Anniversary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #1a0f14;
+      --bg-soft: #2d1822;
+      --rose: #e8a4b8;
+      --rose-bright: #f4c4d4;
+      --gold: #d4a574;
+      --gold-light: #f0d4b0;
+      --cream: #faf6f0;
+      --text-muted: rgba(250, 246, 240, 0.65);
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 300;
+      background: var(--bg-deep);
+      color: var(--cream);
+      overflow: hidden;
+      height: 100dvh;
+      height: 100vh;
+    }
+
+    /* Ambient background */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient__orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+
+    .ambient__orb--1 {
+      width: 60vmax;
+      height: 60vmax;
+      background: radial-gradient(circle, #5c2438 0%, transparent 70%);
+      top: -20%;
+      left: -15%;
+    }
+
+    .ambient__orb--2 {
+      width: 50vmax;
+      height: 50vmax;
+      background: radial-gradient(circle, #3d2818 0%, transparent 70%);
+      bottom: -25%;
+      right: -10%;
+      animation-delay: -6s;
+    }
+
+    .ambient__grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    @keyframes drift {
+      to { transform: translate(5%, 8%) scale(1.05); }
+    }
+
+    /* Loader */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      background: var(--bg-deep);
+      transition: opacity 0.8s var(--ease-out), visibility 0.8s;
+    }
+
+    .loader.is-done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader__heart {
+      width: 48px;
+      height: 48px;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .loader__heart path {
+      fill: var(--rose);
+    }
+
+    .loader__text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    /* Main app — stage-based flow */
+    .app {
+      position: relative;
+      z-index: 1;
+      height: 100dvh;
+      height: 100vh;
+      opacity: 0;
+      transition: opacity 1s var(--ease-out) 0.3s;
+    }
+
+    .app.is-visible { opacity: 1; }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: max(1rem, env(safe-area-inset-top)) 1.25rem calc(4.5rem + env(safe-area-inset-bottom));
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px) scale(0.985);
+      transition:
+        opacity 0.55s var(--ease-out),
+        transform 0.55s var(--ease-out),
+        visibility 0.55s;
+      pointer-events: none;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .stage.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .stage.is-exiting {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.985);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 26rem;
+      text-align: center;
+    }
+
+    .stage-head {
+      margin-bottom: 1.25rem;
+    }
+
+    .stage-head h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.75rem, 6vw, 2.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-top: 0.35rem;
+    }
+
+    h1, h2, .display {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      line-height: 1.15;
+    }
+
+    .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Hero */
+    .hero__title {
+      font-size: clamp(2rem, 9vw, 3.25rem);
+      margin-bottom: 0.35rem;
+    }
+
+    .hero__title em {
+      font-style: italic;
+      color: var(--rose-bright);
+    }
+
+    .hero__subtitle {
+      font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.55;
+    }
+
+    .hero__names {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.25rem, 4.5vw, 1.65rem);
+      color: var(--gold-light);
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-primary {
+      appearance: none;
+      border: 1px solid rgba(212, 165, 116, 0.5);
+      background: transparent;
+      color: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.75rem;
+      min-height: 48px;
+      cursor: pointer;
+      transition: background 0.4s, border-color 0.4s, transform 0.3s var(--ease-out);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary:hover {
+      background: rgba(212, 165, 116, 0.12);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* Envelope */
+    .envelope-wrap {
+      perspective: 1200px;
+      margin: 0.75rem auto 0.5rem;
+      cursor: pointer;
+    }
+
+    .envelope {
+      width: min(280px, 78vw);
+      height: 168px;
+      margin: 0 auto;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s var(--ease-out);
+    }
+
+    .envelope.is-open .envelope__flap {
+      transform: rotateX(180deg);
+      z-index: 0;
+    }
+
+    .envelope.is-open .envelope__letter {
+      transform: translateY(-100px);
+      opacity: 1;
+    }
+
+    .envelope__body {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #3d2430, #2a1520);
+      border: 1px solid rgba(212, 165, 116, 0.25);
+      border-radius: 4px;
+    }
+
+    .envelope__flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(180deg, #4a2d3a, #3d2430);
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+      transform-origin: top center;
+      transition: transform 0.8s var(--ease-out);
+      z-index: 2;
+      border-top: 1px solid rgba(212, 165, 116, 0.2);
+    }
+
+    .envelope__letter {
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: 30%;
+      height: 55%;
+      background: var(--cream);
+      color: var(--bg-deep);
+      padding: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.3;
+      transition: transform 0.9s var(--ease-out) 0.2s, opacity 0.5s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .envelope-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
+
+    .letter-box {
+      background: rgba(250, 246, 240, 0.04);
+      border: 1px solid rgba(212, 165, 116, 0.2);
+      padding: 1.25rem 1.1rem;
+      text-align: left;
+      line-height: 1.55;
+      font-size: clamp(0.78rem, 2.8vw, 0.92rem);
+      color: rgba(250, 246, 240, 0.9);
+      overflow: hidden;
+    }
+
+    .letter-box p + p { margin-top: 0.65rem; }
+
+    .letter-signature {
+      margin-top: 0.85rem;
+      flex-shrink: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      font-style: italic;
+      color: var(--rose-bright);
+      text-align: right;
+    }
+
+    /* Letter stage — full viewport, no scroll when reading */
+    .letter-section {
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .letter-section .container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - calc(4.75rem + env(safe-area-inset-bottom)));
+      max-height: 100%;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .letter-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .letter-section.is-reading .stage-head,
+    .letter-section.is-reading .envelope-wrap,
+    .letter-section.is-reading .envelope-hint {
+      display: none;
+    }
+
+    .letter-section.is-reading .letter-content {
+      flex: 1;
+    }
+
+    .letter-section.is-reading .letter-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 0;
+      padding: clamp(0.85rem, 2.5vh, 1.35rem) clamp(0.9rem, 3vw, 1.15rem);
+      border-color: rgba(212, 165, 116, 0.28);
+      animation: letterFullIn 0.7s var(--ease-out);
+    }
+
+    .letter-section.is-reading .letter-box #letterContent {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .letter-section.is-reading .stage-continue {
+      flex-shrink: 0;
+      margin-top: 0.75rem;
+    }
+
+    @keyframes letterFullIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .stage-continue {
+      margin-top: 1rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+    }
+
+    .stage-continue.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Timeline — swipe carousel */
+    .timeline-carousel {
+      position: relative;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .timeline-track {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.25rem 0 0.5rem;
+      scrollbar-width: none;
+    }
+
+    .timeline-track::-webkit-scrollbar { display: none; }
+
+    .timeline {
+      text-align: left;
+      position: relative;
+      flex: 0 0 88%;
+      scroll-snap-align: center;
+      padding: 1.25rem;
+      border: 1px solid rgba(212, 165, 116, 0.2);
+      background: rgba(250, 246, 240, 0.03);
+      opacity: 1;
+      transform: none;
+    }
+
+    .timeline::before { display: none; }
+
+    .timeline-item {
+      position: relative;
+      padding: 0;
+      opacity: 1;
+      transform: none;
+    }
+
+    .timeline-item::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rose);
+      box-shadow: 0 0 10px var(--rose);
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+    }
+
+    .timeline-dots button {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(212, 165, 116, 0.25);
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .timeline-dots button.is-active {
+      background: var(--rose);
+      transform: scale(1.25);
+    }
+
+    .timeline-item__date {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.35rem;
+    }
+
+    .timeline-item__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .timeline-item__text {
+      color: var(--text-muted);
+      line-height: 1.55;
+      font-size: 0.88rem;
+    }
+
+    /* Finale */
+    .finale h2 {
+      font-size: clamp(1.85rem, 8vw, 3rem);
+      margin-bottom: 0.65rem;
+    }
+
+    .finale h2 em {
+      font-style: italic;
+      color: var(--rose-bright);
+    }
+
+    .finale__date {
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+    }
+
+    .finale__message {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 22rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Stage progress */
+    .stage-nav {
+      position: fixed;
+      left: 50%;
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(26, 15, 20, 0.88);
+      border: 1px solid rgba(212, 165, 116, 0.2);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.6s 0.4s;
+    }
+
+    .app.is-visible .stage-nav { opacity: 1; }
+
+    .stage-nav__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(212, 165, 116, 0.25);
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s, width 0.3s;
+    }
+
+    .stage-nav__dot.is-active {
+      background: var(--rose);
+      transform: scale(1.2);
+    }
+
+    .stage-nav__dot.is-unlocked:not(.is-active):hover {
+      background: rgba(212, 165, 116, 0.5);
+    }
+
+    .stage-nav__dot:disabled {
+      cursor: default;
+      opacity: 0.35;
+    }
+
+    .heart-rain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      overflow: hidden;
+    }
+
+    .floating-heart {
+      position: absolute;
+      font-size: 1rem;
+      opacity: 0;
+      animation: fall linear forwards;
+      color: var(--rose);
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 0;
+        transform: translateY(-10vh) rotate(0deg);
+      }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.5; }
+      100% {
+        opacity: 0;
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Audio play / pause */
+    .music-btn,
+    .audio-btn {
+      border-radius: 50%;
+      border: 1px solid rgba(212, 165, 116, 0.35);
+      background: rgba(26, 15, 20, 0.85);
+      color: var(--cream);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.3s, transform 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .music-btn {
+      position: fixed;
+      bottom: max(4.25rem, calc(3.25rem + env(safe-area-inset-bottom)));
+      right: 1rem;
+      z-index: 100;
+      width: 44px;
+      height: 44px;
+    }
+
+    .music-btn:active,
+    .audio-btn:active { transform: scale(0.94); }
+
+    .music-btn:hover,
+    .audio-btn:hover { border-color: var(--gold); }
+
+    .music-btn.is-playing,
+    .audio-btn.is-playing { border-color: var(--rose); }
+
+    .music-btn .icon-play,
+    .music-btn .icon-pause,
+    .audio-btn .icon-play,
+    .audio-btn .icon-pause {
+      grid-area: 1 / 1;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .music-btn .icon-pause,
+    .audio-btn .icon-pause {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    .music-btn.is-playing .icon-play,
+    .audio-btn.is-playing .icon-play {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    .music-btn.is-playing .icon-pause,
+    .audio-btn.is-playing .icon-pause {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .audio-controls {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-top: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .letter-section.is-reading .audio-controls {
+      display: flex;
+    }
+
+    .audio-btn {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .letter-audio-hint {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Love game */
+    .game-lead {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    .game-panel {
+      width: 100%;
+      max-width: 20rem;
+      margin: 0 auto;
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .game-stats__reset {
+      appearance: none;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .game-stats__reset:hover { color: var(--cream); }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.45rem;
+    }
+
+    .memory-card {
+      aspect-ratio: 1;
+      perspective: 600px;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      background: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .memory-card:disabled {
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    .memory-card__inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.5s var(--ease-out);
+    }
+
+    .memory-card.is-flipped .memory-card__inner,
+    .memory-card.is-matched .memory-card__inner {
+      transform: rotateY(180deg);
+    }
+
+    .memory-card__face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(212, 165, 116, 0.25);
+      border-radius: 2px;
+      font-family: 'Cormorant Garamond', serif;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .memory-card__face--back {
+      background: linear-gradient(145deg, #3d2430, #2a1520);
+      font-size: 1.35rem;
+      color: var(--rose);
+    }
+
+    .memory-card__face--back::after {
+      content: '?';
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      position: absolute;
+      bottom: 0.4rem;
+      opacity: 0.4;
+    }
+
+    .memory-card__face--front {
+      background: rgba(250, 246, 240, 0.06);
+      transform: rotateY(180deg);
+      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+      color: var(--rose-bright);
+      text-align: center;
+      padding: 0.35rem;
+      line-height: 1.2;
+    }
+
+    .memory-card.is-matched .memory-card__face--front {
+      background: rgba(232, 164, 184, 0.12);
+      border-color: var(--rose);
+    }
+
+    .memory-card:not(.is-flipped):not(.is-matched):hover .memory-card__face--back {
+      border-color: var(--gold);
+    }
+
+    .game-win {
+      margin-top: 1rem;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      border: 1px solid rgba(212, 165, 116, 0.3);
+      background: rgba(250, 246, 240, 0.04);
+      animation: gameWinIn 0.7s var(--ease-out);
+    }
+
+    .game-win[hidden] { display: none; }
+
+    @keyframes gameWinIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-win__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      margin-bottom: 0.5rem;
+      color: var(--rose-bright);
+    }
+
+    .game-win__text {
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+    }
+
+    .game-win__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--cream);
+      border: 1px solid rgba(212, 165, 116, 0.35);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(250, 246, 240, 0.06);
+      border-color: var(--gold);
+    }
+
+    /* Letter — locked until game won */
+    .letter-section.is-locked .letter-content {
+      display: none;
+    }
+
+    .letter-locked {
+      text-align: center;
+      padding: 1.75rem 1.25rem;
+      border: 1px dashed rgba(212, 165, 116, 0.35);
+      background: rgba(250, 246, 240, 0.02);
+      margin-top: 0.5rem;
+    }
+
+    .letter-section.is-unlocked .letter-locked {
+      display: none;
+    }
+
+    .letter-locked__icon {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      color: var(--rose);
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .letter-locked__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .letter-locked__text {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .letter-content {
+      animation: letterUnlock 0.9s var(--ease-out);
+    }
+
+    @keyframes letterUnlock {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .letter-box { padding: 1rem 0.9rem; }
+      .memory-grid { gap: 0.35rem; }
+      .memory-card__face--back { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient__orb ambient__orb--1"></div>
+    <div class="ambient__orb ambient__orb--2"></div>
+    <div class="ambient__grain"></div>
+  </div>
+
+  <div class="loader" id="loader">
+    <svg class="loader__heart" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <p class="loader__text">For you</p>
+  </div>
+
+  <div class="heart-rain" id="heartRain" aria-hidden="true"></div>
+
+  <main class="app" id="app">
+    <section class="stage hero is-active" id="hero" data-stage="hero">
+      <div class="container reveal is-visible">
+        <p class="eyebrow">Happy Anniversary</p>
+        <h1 class="hero__title">Every day with you is <em>our story</em></h1>
+        <p class="hero__subtitle" id="heroSubtitle">A little something I made — just for you.</p>
+        <p class="hero__names" id="heroNames">For my favorite person</p>
+        <button type="button" class="btn-primary" id="beginBtn">Open</button>
+      </div>
+    </section>
+
+    <section class="stage game-section" id="gameSection" data-stage="game">
+      <div class="container">
+        <div class="stage-head reveal">
+          <p class="eyebrow">Step 1</p>
+          <h2>Match my heart</h2>
+        </div>
+        <p class="game-lead reveal" id="gameLead">Match every pair to unlock your letter.</p>
+        <div class="game-panel reveal">
+          <div class="game-stats">
+            <span id="gameMoves">Moves: 0</span>
+            <button type="button" class="game-stats__reset" id="gameReset">New game</button>
+          </div>
+          <div class="memory-grid" id="memoryGrid" role="grid" aria-label="Memory match game"></div>
+          <div class="game-win" id="gameWin" hidden>
+            <p class="game-win__title" id="gameWinTitle">You won!</p>
+            <p class="game-win__text" id="gameWinText"></p>
+            <div class="game-win__actions">
+              <button type="button" class="btn-primary" id="gameToLetter">Read your letter</button>
+              <button type="button" class="btn-primary btn-secondary" id="gameReplay">Play again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage letter-section is-locked" id="letterSection" data-stage="letter">
+      <div class="container">
+        <div class="stage-head reveal">
+          <p class="eyebrow">Step 2</p>
+          <h2>Your letter</h2>
+        </div>
+        <div class="letter-locked reveal" id="letterLocked">
+          <p class="letter-locked__icon" aria-hidden="true">♥</p>
+          <p class="letter-locked__title">Almost there</p>
+          <p class="letter-locked__text" id="letterLockedText">Win the game to unlock your letter.</p>
+          <button type="button" class="btn-primary" id="backToGameBtn" style="margin-top:1.25rem">Back to game</button>
+        </div>
+        <div class="letter-content" id="letterContentWrap" hidden>
+          <div class="envelope-wrap reveal" id="envelopeWrap" role="button" tabindex="0" aria-label="Open envelope">
+            <div class="envelope" id="envelope">
+              <div class="envelope__body"></div>
+              <div class="envelope__flap"></div>
+              <div class="envelope__letter" id="envelopeTeaser">Tap to open</div>
+            </div>
+            <p class="envelope-hint">Tap the envelope</p>
+          </div>
+          <div class="letter-box reveal" id="letterBox" hidden>
+            <div id="letterContent"></div>
+            <p class="letter-signature" id="letterSignature">— With all my love</p>
+          </div>
+          <div class="audio-controls" id="letterAudioControls">
+            <button type="button" class="audio-btn is-playing" id="letterPlayPause" aria-label="Pause music">
+              <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </button>
+            <span class="letter-audio-hint" id="letterAudioHint">♫ playing for you</span>
+          </div>
+          <button type="button" class="btn-primary stage-continue" id="letterContinue">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage timeline-section" id="timelineSection" data-stage="story">
+      <div class="container">
+        <div class="stage-head reveal">
+          <p class="eyebrow">Step 3</p>
+          <h2>Our story</h2>
+        </div>
+        <div class="timeline-carousel reveal">
+          <div class="timeline-track" id="timeline"></div>
+          <div class="timeline-dots" id="timelineDots"></div>
+        </div>
+        <button type="button" class="btn-primary stage-continue is-visible" id="storyContinue">Continue</button>
+      </div>
+    </section>
+
+    <section class="stage finale" id="finale" data-stage="finale">
+      <div class="container reveal">
+        <p class="eyebrow">Forever</p>
+        <h2>Happy Anniversary, <em id="finaleName">beautiful</em></h2>
+        <p class="finale__date" id="finaleDate"></p>
+        <p class="finale__message" id="finaleMessage">
+          Thank you for choosing me, for laughing with me, for building a life that feels like home. Here's to every chapter still unwritten — with you.
+        </p>
+        <button type="button" class="btn-primary" id="celebrateBtn">Celebrate us</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="stage-nav" id="stageNav" aria-label="Progress">
+    <button type="button" class="stage-nav__dot is-active is-unlocked" data-stage="hero" aria-label="Welcome"></button>
+    <button type="button" class="stage-nav__dot is-unlocked" data-stage="game" aria-label="Game"></button>
+    <button type="button" class="stage-nav__dot" data-stage="letter" aria-label="Letter" disabled></button>
+    <button type="button" class="stage-nav__dot" data-stage="story" aria-label="Story" disabled></button>
+    <button type="button" class="stage-nav__dot" data-stage="finale" aria-label="Finale" disabled></button>
+  </nav>
+
+  <button type="button" class="music-btn" id="musicBtn" aria-label="Play music" title="Play music">
+    <svg class="icon-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+    <svg class="icon-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+    </svg>
+  </button>
+
+  <audio id="bgMusic" loop preload="none">
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <audio id="letterAudio" loop preload="auto">
+    <source src="love.mp3" type="audio/mpeg" />
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  CUSTOMIZE THIS — make it yours before you send it to her
+    // ═══════════════════════════════════════════════════════════════
+    const CONFIG = {
+      yourName: 'Prosper',           // Your name (signature)
+      herName: 'Ann-Marie',          // Her name — shows in hero & finale
+      togetherLabel: 'Prosper & Ann-Marie',  // Optional line under hero
+      anniversaryDate: 'June 3, 2026',      // Display date
+      yearsTogether: '',           // e.g. '2 years' or leave empty
+
+      letter: [
+        'Happy Anniversary Honey! ❤️',
+        'Today marks another month of Us, and I still get that same feeling when I see you, like the world quietly shifts into focus.',
+        'You are the cheese to my burger, literally 😂, my laugh when I take myself too seriously, and the person I want beside me forever.',
+        'Happy anniversary — today, tomorrow, and always! 😘',
+      ],
+
+      timeline: [
+        { date: 'The beginning', title: 'When we met', text: 'We became inseperable.' },
+        { date: 'A favorite memory', title: 'That perfect day', text: 'When I asked you to be my girlfriend and you said yes.' },
+        { date: 'Every day since', title: 'Choosing each other', text: 'Not just being together — the things we did and achieved together."' },
+        { date: 'Today', title: 'Our anniversary', text: 'Another month of building something beautiful together. I\'m so proud to call you mine!' },
+      ],
+
+      finaleMessage: 'Thank you for choosing me, for laughing with me, for building a life that feels like home. Here\'s to every chapter still unwritten — with you.',
+
+      gameLead: 'Match every pair to unlock your letter — made for Ann-Marie.',
+      gameWinTitle: 'You unlocked your letter!',
+      gameWinMessage: 'Just like us — every pair belongs together. Your letter is ready.',
+      gameToLetterCta: 'Read your letter',
+      letterLockedText: 'Win the game above to unlock your letter from Prosper.',
+      letterAudioHint: '♫ playing for you',
+      letterAudioPaused: 'Tap play for your song',
+      gamePairs: [
+        { id: 'heart', label: '♥' },
+        { id: 'us', label: 'Us' },
+        { id: 'p', label: 'P' },
+        { id: 'a', label: 'A' },
+        { id: 'kiss', label: 'Kiss' },
+        { id: 'love', label: 'Love' },
+      ],
+    };
+    // ═══════════════════════════════════════════════════════════════
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+    const STORAGE_KEY = 'ourStoryLetterUnlocked';
+    const STAGE_KEY = 'ourStoryMaxStage';
+    const STAGES = ['hero', 'game', 'letter', 'story', 'finale'];
+
+    let letterUnlocked = sessionStorage.getItem(STORAGE_KEY) === '1';
+    let maxUnlockedIndex = parseInt(sessionStorage.getItem(STAGE_KEY) || '0', 10);
+    let currentStage = 'hero';
+    let stageTransitionLock = false;
+    let letterSynthStop = null;
+    let letterAudioPlaying = false;
+    let bgMusicPlaying = false;
+
+    function isLetterReading() {
+      return currentStage === 'letter' && $('#letterSection').classList.contains('is-reading');
+    }
+
+    function updatePlayPauseUI() {
+      const letterActive = isLetterReading();
+      const playing = letterActive ? letterAudioPlaying : bgMusicPlaying;
+
+      $('#musicBtn').classList.toggle('is-playing', playing);
+      $('#musicBtn').setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+      $('#musicBtn').title = playing ? 'Pause' : 'Play';
+
+      const letterBtn = $('#letterPlayPause');
+      if (letterBtn) {
+        letterBtn.classList.toggle('is-playing', letterAudioPlaying);
+        letterBtn.setAttribute('aria-label', letterAudioPlaying ? 'Pause music' : 'Play music');
+      }
+
+      const hint = $('#letterAudioHint');
+      if (hint && letterActive) {
+        hint.textContent = letterAudioPlaying
+          ? CONFIG.letterAudioHint
+          : CONFIG.letterAudioPaused;
+      }
+    }
+
+    async function toggleBgMusic() {
+      const bg = $('#bgMusic');
+      try {
+        if (bgMusicPlaying) {
+          bg.pause();
+          bgMusicPlaying = false;
+        } else {
+          await bg.play();
+          bgMusicPlaying = true;
+        }
+        updatePlayPauseUI();
+      } catch {
+        $('#musicBtn').title = 'Add music.mp3 to the folder';
+      }
+    }
+
+    function toggleLetterAudio() {
+      if (letterAudioPlaying) pauseLetterLoveSound();
+      else playLetterLoveSound();
+    }
+
+    function toggleAudio() {
+      if (isLetterReading()) toggleLetterAudio();
+      else toggleBgMusic();
+    }
+
+    function stageIndex(name) {
+      return STAGES.indexOf(name);
+    }
+
+    function saveProgress() {
+      sessionStorage.setItem(STAGE_KEY, String(maxUnlockedIndex));
+    }
+
+    function unlockStage(name) {
+      const idx = stageIndex(name);
+      if (idx > maxUnlockedIndex) {
+        maxUnlockedIndex = idx;
+        saveProgress();
+      }
+      updateStageNav();
+    }
+
+    function updateStageNav() {
+      $$('.stage-nav__dot').forEach((dot) => {
+        const name = dot.dataset.stage;
+        const idx = stageIndex(name);
+        const unlocked = idx <= maxUnlockedIndex;
+        dot.disabled = !unlocked;
+        dot.classList.toggle('is-unlocked', unlocked);
+        dot.classList.toggle('is-active', name === currentStage);
+      });
+    }
+
+    function goToStage(name, { instant = false } = {}) {
+      if (stageTransitionLock || name === currentStage) return;
+      const target = stageIndex(name);
+      if (target > maxUnlockedIndex) return;
+
+      if (currentStage === 'letter' && name !== 'letter') {
+        stopLetterLoveSound();
+        $('#letterSection').classList.remove('is-reading');
+      }
+
+      const currentEl = $(`.stage[data-stage="${currentStage}"]`);
+      const nextEl = $(`.stage[data-stage="${name}"]`);
+      if (!currentEl || !nextEl) return;
+
+      if (instant) {
+        currentEl.classList.remove('is-active', 'is-exiting');
+        nextEl.classList.add('is-active');
+        currentStage = name;
+        updateStageNav();
+        nextEl.scrollTop = 0;
+        return;
+      }
+
+      stageTransitionLock = true;
+      currentEl.classList.add('is-exiting');
+      currentEl.classList.remove('is-active');
+
+      setTimeout(() => {
+        currentEl.classList.remove('is-exiting');
+        nextEl.classList.add('is-active');
+        nextEl.scrollTop = 0;
+        currentStage = name;
+        updateStageNav();
+        $$('.stage.is-active .reveal').forEach((el) => el.classList.add('is-visible'));
+        updatePlayPauseUI();
+        stageTransitionLock = false;
+      }, 280);
+    }
+
+    function unlockLetter(advance) {
+      if (!letterUnlocked) {
+        letterUnlocked = true;
+        sessionStorage.setItem(STORAGE_KEY, '1');
+
+        const section = $('#letterSection');
+        section.classList.remove('is-locked');
+        section.classList.add('is-unlocked');
+
+        const wrap = $('#letterContentWrap');
+        wrap.hidden = false;
+        wrap.classList.add('reveal', 'is-visible');
+      }
+
+      unlockStage('letter');
+
+      if (advance) {
+        setTimeout(() => goToStage('letter'), 400);
+      }
+    }
+
+    function init() {
+      $('#heroNames').textContent = CONFIG.togetherLabel || `For ${CONFIG.herName}`;
+      $('#finaleName').textContent = CONFIG.herName;
+      $('#letterSignature').textContent = `— ${CONFIG.yourName}, with all my love`;
+      $('#finaleMessage').textContent = CONFIG.finaleMessage;
+
+      let dateText = CONFIG.anniversaryDate;
+      if (CONFIG.yearsTogether) dateText += ` · ${CONFIG.yearsTogether}`;
+      $('#finaleDate').textContent = dateText;
+
+      const letterHtml = CONFIG.letter.map((p) => `<p>${escapeHtml(p)}</p>`).join('');
+      $('#letterContent').innerHTML = letterHtml;
+
+      const timelineEl = $('#timeline');
+      const dotsEl = $('#timelineDots');
+      CONFIG.timeline.forEach((item, i) => {
+        const el = document.createElement('article');
+        el.className = 'timeline timeline-item';
+        el.innerHTML = `
+          <p class="timeline-item__date">${escapeHtml(item.date)}</p>
+          <h3 class="timeline-item__title">${escapeHtml(item.title)}</h3>
+          <p class="timeline-item__text">${escapeHtml(item.text)}</p>
+        `;
+        timelineEl.appendChild(el);
+
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Memory ${i + 1}`);
+        if (i === 0) dot.classList.add('is-active');
+        dot.addEventListener('click', () => {
+          el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+        dotsEl.appendChild(dot);
+      });
+
+      timelineEl.addEventListener('scroll', () => {
+        const cards = $$('.timeline-item');
+        const dots = $$('.timeline-dots button');
+        let active = 0;
+        cards.forEach((card, i) => {
+          const rect = card.getBoundingClientRect();
+          const center = rect.left + rect.width / 2;
+          if (Math.abs(center - window.innerWidth / 2) < rect.width * 0.6) active = i;
+        });
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+      }, { passive: true });
+
+      $('#letterLockedText').textContent = CONFIG.letterLockedText;
+      $('#gameToLetter').textContent = CONFIG.gameToLetterCta;
+      $('#letterAudioHint').textContent = CONFIG.letterAudioHint;
+
+      if (letterUnlocked) {
+        $('#letterSection').classList.remove('is-locked');
+        $('#letterSection').classList.add('is-unlocked');
+        $('#letterContentWrap').hidden = false;
+        maxUnlockedIndex = Math.max(maxUnlockedIndex, stageIndex('letter'));
+      }
+
+      updateStageNav();
+
+      setupLoader();
+      setupStages();
+      setupReveals();
+      setupEnvelope();
+      setupNavigation();
+      setupCelebrate();
+      setupMusic();
+      setupLoveGame();
+    }
+
+    function setupStages() {
+      $$('.stage-nav__dot').forEach((dot) => {
+        dot.addEventListener('click', () => {
+          if (!dot.disabled) goToStage(dot.dataset.stage);
+        });
+      });
+
+      $('#backToGameBtn').addEventListener('click', () => goToStage('game'));
+      $('#letterContinue').addEventListener('click', () => {
+        unlockStage('story');
+        goToStage('story');
+      });
+      $('#storyContinue').addEventListener('click', () => {
+        unlockStage('finale');
+        goToStage('finale');
+      });
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function setupLoader() {
+      setTimeout(() => {
+        $('#loader').classList.add('is-done');
+        $('#app').classList.add('is-visible');
+      }, 2200);
+    }
+
+    function setupReveals() {
+      $$('.stage.is-active .reveal').forEach((el) => el.classList.add('is-visible'));
+    }
+
+    function setupEnvelope() {
+      const wrap = $('#envelopeWrap');
+      const envelope = $('#envelope');
+      const letterBox = $('#letterBox');
+      const teaser = $('#envelopeTeaser');
+      const letterSection = $('#letterSection');
+
+      function open() {
+        if (!letterUnlocked) {
+          goToStage('game');
+          return;
+        }
+        if (envelope.classList.contains('is-open')) return;
+        envelope.classList.add('is-open');
+        teaser.textContent = '♥';
+        setTimeout(() => {
+          letterSection.classList.add('is-reading');
+          letterBox.hidden = false;
+          letterBox.classList.add('reveal', 'is-visible');
+          $('#letterContinue').classList.add('is-visible');
+          playLetterLoveSound();
+        }, 650);
+      }
+
+      wrap.addEventListener('click', open);
+      wrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    }
+
+    function playLetterLoveSound() {
+      if (letterSynthStop) {
+        letterSynthStop();
+        letterSynthStop = null;
+      }
+
+      const audio = $('#letterAudio');
+      audio.volume = 0.45;
+      if (audio.paused) audio.currentTime = audio.currentTime || 0;
+
+      audio.play()
+        .then(() => {
+          letterAudioPlaying = true;
+          updatePlayPauseUI();
+        })
+        .catch(() => {
+          letterSynthStop = startLetterSynth();
+          letterAudioPlaying = true;
+          updatePlayPauseUI();
+        });
+    }
+
+    function pauseLetterLoveSound() {
+      $('#letterAudio').pause();
+      if (letterSynthStop) {
+        letterSynthStop();
+        letterSynthStop = null;
+      }
+      letterAudioPlaying = false;
+      updatePlayPauseUI();
+    }
+
+    function stopLetterLoveSound() {
+      pauseLetterLoveSound();
+    }
+
+    function startLetterSynth() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return null;
+
+      const ctx = new AudioCtx();
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0, ctx.currentTime);
+      master.gain.linearRampToValueAtTime(0.13, ctx.currentTime + 1.4);
+      master.connect(ctx.destination);
+
+      const notes = [261.63, 329.63, 392, 493.88, 523.25];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t = ctx.currentTime + i * 0.16;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.18, t + 0.55);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 4.2);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(t);
+        osc.stop(t + 4.3);
+      });
+
+      const pads = [];
+      [[130.81, 0.045], [196, 0.035], [261.63, 0.03]].forEach(([freq, vol]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.value = vol;
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(ctx.currentTime + 0.8);
+        pads.push(osc);
+      });
+
+      return () => {
+        master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.9);
+        setTimeout(() => {
+          pads.forEach((o) => { try { o.stop(); } catch (_) {} });
+          ctx.close();
+        }, 950);
+      };
+    }
+
+    function setupNavigation() {
+      $('#beginBtn').addEventListener('click', () => {
+        unlockStage('game');
+        goToStage('game');
+      });
+    }
+
+    function setupCelebrate() {
+      $('#celebrateBtn').addEventListener('click', spawnHearts);
+    }
+
+    function spawnHearts() {
+      const container = $('#heartRain');
+      const symbols = ['♥', '♡', '❤', '✦'];
+      for (let i = 0; i < 48; i++) {
+        const h = document.createElement('span');
+        h.className = 'floating-heart';
+        h.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        h.style.left = Math.random() * 100 + '%';
+        h.style.animationDuration = 4 + Math.random() * 4 + 's';
+        h.style.animationDelay = Math.random() * 2 + 's';
+        h.style.fontSize = 0.6 + Math.random() * 1.2 + 'rem';
+        container.appendChild(h);
+        setTimeout(() => h.remove(), 9000);
+      }
+    }
+
+    function setupMusic() {
+      $('#musicBtn').addEventListener('click', toggleAudio);
+      $('#letterPlayPause').addEventListener('click', toggleLetterAudio);
+      updatePlayPauseUI();
+    }
+
+    function setupLoveGame() {
+      const grid = $('#memoryGrid');
+      const movesEl = $('#gameMoves');
+      const winEl = $('#gameWin');
+      const winTitle = $('#gameWinTitle');
+      const winText = $('#gameWinText');
+
+      $('#gameLead').textContent = CONFIG.gameLead;
+      winTitle.textContent = CONFIG.gameWinTitle;
+      winText.textContent = CONFIG.gameWinMessage;
+
+      let cards = [];
+      let flipped = [];
+      let matched = 0;
+      let moves = 0;
+      let lock = false;
+
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function buildDeck() {
+        const deck = [];
+        CONFIG.gamePairs.forEach((pair) => {
+          deck.push({ ...pair, uid: pair.id + '-1' });
+          deck.push({ ...pair, uid: pair.id + '-2' });
+        });
+        return shuffle(deck);
+      }
+
+      function updateMoves() {
+        movesEl.textContent = `Moves: ${moves}`;
+      }
+
+      function render() {
+        grid.innerHTML = '';
+        winEl.hidden = true;
+        cards = buildDeck();
+        flipped = [];
+        matched = 0;
+        moves = 0;
+        lock = false;
+        updateMoves();
+
+        cards.forEach((card, index) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'memory-card';
+          btn.dataset.index = String(index);
+          btn.dataset.id = card.id;
+          btn.setAttribute('role', 'gridcell');
+          btn.setAttribute('aria-label', 'Hidden card');
+          btn.innerHTML = `
+            <div class="memory-card__inner">
+              <span class="memory-card__face memory-card__face--back" aria-hidden="true">♥</span>
+              <span class="memory-card__face memory-card__face--front">${escapeHtml(card.label)}</span>
+            </div>
+          `;
+          btn.addEventListener('click', () => onFlip(btn, index));
+          grid.appendChild(btn);
+        });
+      }
+
+      function onFlip(btn, index) {
+        if (lock || btn.classList.contains('is-flipped') || btn.classList.contains('is-matched')) return;
+
+        btn.classList.add('is-flipped');
+        btn.setAttribute('aria-label', cards[index].label);
+        flipped.push({ btn, index });
+
+        if (flipped.length < 2) return;
+
+        moves++;
+        updateMoves();
+        lock = true;
+
+        const [a, b] = flipped;
+        const match = cards[a.index].id === cards[b.index].id;
+
+        if (match) {
+          a.btn.classList.add('is-matched');
+          b.btn.classList.add('is-matched');
+          a.btn.disabled = true;
+          b.btn.disabled = true;
+          matched += 2;
+          flipped = [];
+          lock = false;
+
+          if (matched === cards.length) {
+            setTimeout(() => {
+              winEl.hidden = false;
+              spawnHearts();
+              unlockLetter(false);
+              setTimeout(() => goToStage('letter'), 1600);
+            }, 500);
+          }
+        } else {
+          setTimeout(() => {
+            a.btn.classList.remove('is-flipped');
+            b.btn.classList.remove('is-flipped');
+            a.btn.setAttribute('aria-label', 'Hidden card');
+            b.btn.setAttribute('aria-label', 'Hidden card');
+            flipped = [];
+            lock = false;
+          }, 900);
+        }
+      }
+
+      $('#gameReset').addEventListener('click', render);
+      $('#gameReplay').addEventListener('click', render);
+      $('#gameToLetter').addEventListener('click', () => {
+        unlockLetter(false);
+        goToStage('letter');
+      });
+
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
